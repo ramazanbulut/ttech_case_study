@@ -24,8 +24,6 @@ Aviation Route Planner is a full-stack web application designed to help users pl
 - **Routing & State Management**
   - React Router v7.5.3
     - Client-side routing
-    - Nested routes support
-    - Route guards and authentication
 
 - **API & Data Handling**
   - Axios
@@ -68,7 +66,6 @@ Aviation Route Planner is a full-stack web application designed to help users pl
     - Content negotiation
   - Spring Validation
     - Input validation
-    - Custom validators
     - Error handling
 
 - **Documentation & Development**
@@ -79,7 +76,6 @@ Aviation Route Planner is a full-stack web application designed to help users pl
   - Lombok
     - Reduced boilerplate code
     - Automatic getter/setter generation
-    - Builder pattern support
 
 ## Project Structure
 ```
@@ -231,13 +227,3 @@ The `add_airports.py` script is used to import airport data from `airports.csv`:
    ```bash
    python add_airports.py
    ```
-
-## Contributing
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
-
-## License
-This project is licensed under the MIT License - see the LICENSE file for details. 
