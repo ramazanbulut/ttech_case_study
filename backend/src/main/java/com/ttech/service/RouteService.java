@@ -47,7 +47,7 @@ public class RouteService {
         LocalDate searchDate = request.getDate() != null ? request.getDate() : LocalDate.now();
 
         List<List<Transportation>> allRoutes = new ArrayList<>();
-        findRoutes(origin, destination, new ArrayList<>(), allRoutes, searchDate, new HashSet<>());
+        findRoutes(origin, destination, new ArrayList<>(), allRoutes, searchDate, new HashSet<>(),false);
 
         return allRoutes.stream()
                 .filter(this::isValidRoute)
@@ -55,8 +55,9 @@ public class RouteService {
     }
 
     private void findRoutes(Location current, Location destination, List<Transportation> currentRoute,
-            List<List<Transportation>> allRoutes, LocalDate date,
-            Set<Location> visited) {
+                            List<List<Transportation>> allRoutes, LocalDate date,
+                            Set<Location> visited, boolean hasFlight) {
+
         if (current.equals(destination)) {
             allRoutes.add(new ArrayList<>(currentRoute));
             return;
@@ -69,16 +70,28 @@ public class RouteService {
         visited.add(current);
 
         List<Transportation> possibleTransports = transportationRepository.findByOriginLocation(current);
+
         for (Transportation transport : possibleTransports) {
-            if (isTransportAvailable(transport, date)) {
-                currentRoute.add(transport);
-                findRoutes(transport.getDestinationLocation(), destination, currentRoute, allRoutes, date, visited);
-                currentRoute.remove(currentRoute.size() - 1);
+            if (!isTransportAvailable(transport, date)) {
+                continue;
             }
+
+            if (hasFlight && transport.getTransportationType() == Transportation.TransportationType.FLIGHT) {
+                continue;
+            }
+
+            currentRoute.add(transport);
+
+            boolean nextHasFlight = hasFlight || transport.getTransportationType() == Transportation.TransportationType.FLIGHT;
+
+            findRoutes(transport.getDestinationLocation(), destination, currentRoute, allRoutes, date, visited, nextHasFlight);
+
+            currentRoute.remove(currentRoute.size() - 1);
         }
 
         visited.remove(current);
     }
+
 
     private boolean isTransportAvailable(Transportation transport, LocalDate date) {
         System.out.print(transport.getId());
