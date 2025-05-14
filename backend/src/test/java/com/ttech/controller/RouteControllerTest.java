@@ -86,10 +86,7 @@ class RouteControllerTest {
     @Test
     void findRoutes_Successful() throws Exception {
         // Given
-        RouteSearchRequest request = new RouteSearchRequest();
-        request.setOriginLocationCode("IST");
-        request.setDestinationLocationCode("IZM");
-        request.setDate(LocalDate.now());
+        RouteSearchRequest request = new RouteSearchRequest("IST","IZM",LocalDate.now());
 
         List<List<Transportation>> expectedRoutes = Collections.singletonList(
                 Arrays.asList(flight, bus)
@@ -111,9 +108,7 @@ class RouteControllerTest {
     @Test
     void findRoutes_SuccessfulWithoutDate() throws Exception {
         // Given
-        RouteSearchRequest request = new RouteSearchRequest();
-        request.setOriginLocationCode("IST");
-        request.setDestinationLocationCode("IZM");
+        RouteSearchRequest request = new RouteSearchRequest("IST","IZM",null);
         // Date is not set
 
         List<List<Transportation>> expectedRoutes = Collections.singletonList(
@@ -136,10 +131,7 @@ class RouteControllerTest {
     @Test
     void findRoutes_InvalidLocationCode() throws Exception {
         // Given
-        RouteSearchRequest request = new RouteSearchRequest();
-        request.setOriginLocationCode("INVALID");
-        request.setDestinationLocationCode("IZM");
-        // Date is optional, not setting it
+        RouteSearchRequest request = new RouteSearchRequest("INVALID","IZM", null);
 
         when(routeService.findValidRoutes(any(RouteSearchRequest.class)))
                 .thenReturn(Collections.emptyList());
@@ -171,9 +163,7 @@ class RouteControllerTest {
     @Test
     void findRoutes_NoRoutesFound() throws Exception {
         // Given
-        RouteSearchRequest request = new RouteSearchRequest();
-        request.setOriginLocationCode("IST");
-        request.setDestinationLocationCode("IZM");
+        RouteSearchRequest request = new RouteSearchRequest("IST","IZM", null);
         // Date is optional, not setting it
 
         when(routeService.findValidRoutes(any(RouteSearchRequest.class)))
