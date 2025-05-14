@@ -1,6 +1,6 @@
 package com.ttech.service;
 
-import com.ttech.dto.RouteSearchRequest;
+import com.ttech.dto.requests.RouteSearchRequest;
 import com.ttech.model.Location;
 import com.ttech.model.Transportation;
 import com.ttech.repository.LocationRepository;
@@ -11,6 +11,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -98,15 +100,19 @@ class RouteServiceTest {
     }
 
     @Test
-    void shouldReturnEmpty_WhenOriginLocationInvalid() {
+    void shouldThrowException_WhenOriginLocationInvalid() {
         RouteSearchRequest request = new RouteSearchRequest("INVALID", "IZM", fixedDate);
 
         when(locationRepository.findByLocationCode("INVALID")).thenReturn(null);
 
-        List<List<Transportation>> routes = routeService.findValidRoutes(request);
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
+            routeService.findValidRoutes(request);
+        });
 
-        assertTrue(routes.isEmpty());
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+        assertEquals("Invalid originLocationCode: INVALID", exception.getReason());
     }
+
 
     @Test
     void shouldReturnEmpty_WhenNoTransportsAvailable() {

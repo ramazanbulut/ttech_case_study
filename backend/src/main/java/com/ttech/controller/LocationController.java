@@ -1,6 +1,6 @@
 package com.ttech.controller;
 
-import com.ttech.dto.ApiResponse;
+import com.ttech.dto.responses.ApiResponse;
 import com.ttech.model.Location;
 import com.ttech.model.Location.SortBy;
 import com.ttech.service.LocationService;

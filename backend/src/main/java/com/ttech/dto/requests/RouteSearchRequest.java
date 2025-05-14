@@ -1,4 +1,4 @@
-package com.ttech.dto;
+package com.ttech.dto.requests;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

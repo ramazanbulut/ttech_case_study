@@ -1,7 +1,7 @@
 package com.ttech.controller;
 
-import com.ttech.dto.ApiResponse;
-import com.ttech.dto.TransportationFilterRequest;
+import com.ttech.dto.responses.ApiResponse;
+import com.ttech.dto.requests.TransportationFilterRequest;
 import com.ttech.model.Transportation;
 import com.ttech.service.TransportationService;
 import io.swagger.v3.oas.annotations.Operation;

@@ -1,13 +1,15 @@
 package com.ttech.service;
 
-import com.ttech.dto.RouteSearchRequest;
+import com.ttech.constant.ExceptionMessages;
+import com.ttech.dto.requests.RouteSearchRequest;
 import com.ttech.model.Location;
 import com.ttech.model.Transportation;
 import com.ttech.repository.LocationRepository;
 import com.ttech.repository.TransportationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.ttech.service.RouteService;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -30,8 +32,15 @@ public class RouteService {
         Location origin = locationRepository.findByLocationCode(request.getOriginLocationCode());
         Location destination = locationRepository.findByLocationCode(request.getDestinationLocationCode());
 
-        if (origin == null || destination == null) {
-            return new ArrayList<>();
+        if (origin == null ) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    String.format(ExceptionMessages.INVALID_ORIGIN_LOCATION,
+                        request.getOriginLocationCode()));
+        }
+        if (destination == null ) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    String.format(ExceptionMessages.INVALID_DESTINATION_LOCATION,
+                        request.getDestinationLocationCode()));
         }
 
         // Use current date if date is not provided
@@ -83,10 +92,6 @@ public class RouteService {
     }
 
     private boolean isValidRoute(List<Transportation> route) {
-        if (route.isEmpty()) {
-            return false;
-        }
-
         boolean hasFlight = false;
         int beforeFlightCount = 0;
         int afterFlightCount = 0;

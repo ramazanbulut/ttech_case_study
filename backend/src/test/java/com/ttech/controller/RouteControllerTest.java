@@ -1,8 +1,6 @@
 package com.ttech.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ttech.dto.ApiResponse;
-import com.ttech.dto.RouteSearchRequest;
+import com.ttech.dto.requests.RouteSearchRequest;
 import com.ttech.model.Location;
 import com.ttech.model.Transportation;
 import com.ttech.service.RouteService;
@@ -11,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
@@ -21,7 +18,7 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -30,9 +27,6 @@ class RouteControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @MockBean
     private RouteService routeService;
@@ -45,7 +39,6 @@ class RouteControllerTest {
 
     @BeforeEach
     void setUp() {
-        // Setup test locations
         istanbul = new Location();
         istanbul.setId(1L);
         istanbul.setLocationCode("IST");
@@ -67,38 +60,30 @@ class RouteControllerTest {
         izmir.setCity("Izmir");
         izmir.setCountry("Turkey");
 
-        // Setup test transportation
         flight = new Transportation();
         flight.setId(1L);
         flight.setOriginLocation(istanbul);
         flight.setDestinationLocation(ankara);
         flight.setTransportationType(Transportation.TransportationType.FLIGHT);
-        flight.setOperatingDays(Arrays.asList(1, 2, 3, 4, 5, 6, 7)); // Every day
+        flight.setOperatingDays(Arrays.asList(1, 2, 3, 4, 5, 6, 7));
 
         bus = new Transportation();
         bus.setId(2L);
         bus.setOriginLocation(ankara);
         bus.setDestinationLocation(izmir);
         bus.setTransportationType(Transportation.TransportationType.BUS);
-        bus.setOperatingDays(Arrays.asList(1, 2, 3, 4, 5, 6, 7)); // Every day
+        bus.setOperatingDays(Arrays.asList(1, 2, 3, 4, 5, 6, 7));
     }
 
     @Test
     void findRoutes_Successful() throws Exception {
-        // Given
-        RouteSearchRequest request = new RouteSearchRequest("IST","IZM",LocalDate.now());
+        List<List<Transportation>> expectedRoutes = Collections.singletonList(Arrays.asList(flight, bus));
+        when(routeService.findValidRoutes(any(RouteSearchRequest.class))).thenReturn(expectedRoutes);
 
-        List<List<Transportation>> expectedRoutes = Collections.singletonList(
-                Arrays.asList(flight, bus)
-        );
-
-        when(routeService.findValidRoutes(any(RouteSearchRequest.class)))
-                .thenReturn(expectedRoutes);
-
-        // When & Then
-        mockMvc.perform(post("/api/routes/search")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
+        mockMvc.perform(get("/api/routes/search")
+                        .param("originLocationCode", "IST")
+                        .param("destinationLocationCode", "IZM")
+                        .param("date", LocalDate.now().toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data[0][0].transportationType").value("FLIGHT"))
@@ -107,21 +92,12 @@ class RouteControllerTest {
 
     @Test
     void findRoutes_SuccessfulWithoutDate() throws Exception {
-        // Given
-        RouteSearchRequest request = new RouteSearchRequest("IST","IZM",null);
-        // Date is not set
+        List<List<Transportation>> expectedRoutes = Collections.singletonList(Arrays.asList(flight, bus));
+        when(routeService.findValidRoutes(any(RouteSearchRequest.class))).thenReturn(expectedRoutes);
 
-        List<List<Transportation>> expectedRoutes = Collections.singletonList(
-                Arrays.asList(flight, bus)
-        );
-
-        when(routeService.findValidRoutes(any(RouteSearchRequest.class)))
-                .thenReturn(expectedRoutes);
-
-        // When & Then
-        mockMvc.perform(post("/api/routes/search")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
+        mockMvc.perform(get("/api/routes/search")
+                        .param("originLocationCode", "IST")
+                        .param("destinationLocationCode", "IZM"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data[0][0].transportationType").value("FLIGHT"))
@@ -130,16 +106,11 @@ class RouteControllerTest {
 
     @Test
     void findRoutes_InvalidLocationCode() throws Exception {
-        // Given
-        RouteSearchRequest request = new RouteSearchRequest("INVALID","IZM", null);
+        when(routeService.findValidRoutes(any(RouteSearchRequest.class))).thenReturn(Collections.emptyList());
 
-        when(routeService.findValidRoutes(any(RouteSearchRequest.class)))
-                .thenReturn(Collections.emptyList());
-
-        // When & Then
-        mockMvc.perform(post("/api/routes/search")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
+        mockMvc.perform(get("/api/routes/search")
+                        .param("originLocationCode", "INVALID")
+                        .param("destinationLocationCode", "IZM"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data").isArray())
@@ -148,34 +119,21 @@ class RouteControllerTest {
 
     @Test
     void findRoutes_InvalidRequest() throws Exception {
-        // Given
-        RouteSearchRequest request = new RouteSearchRequest();
-        // Missing required fields (origin and destination)
-
-        // When & Then
-        mockMvc.perform(post("/api/routes/search")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
+        mockMvc.perform(get("/api/routes/search")) // eksik parametrelerle
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false));
     }
 
     @Test
     void findRoutes_NoRoutesFound() throws Exception {
-        // Given
-        RouteSearchRequest request = new RouteSearchRequest("IST","IZM", null);
-        // Date is optional, not setting it
+        when(routeService.findValidRoutes(any(RouteSearchRequest.class))).thenReturn(Collections.emptyList());
 
-        when(routeService.findValidRoutes(any(RouteSearchRequest.class)))
-                .thenReturn(Collections.emptyList());
-
-        // When & Then
-        mockMvc.perform(post("/api/routes/search")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
+        mockMvc.perform(get("/api/routes/search")
+                        .param("originLocationCode", "IST")
+                        .param("destinationLocationCode", "IZM"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data").isArray())
                 .andExpect(jsonPath("$.data").isEmpty());
     }
-} 
+}

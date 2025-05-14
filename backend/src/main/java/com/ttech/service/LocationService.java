@@ -1,5 +1,6 @@
 package com.ttech.service;
 
+import com.ttech.constant.ExceptionMessages;
 import com.ttech.model.Location;
 import com.ttech.repository.LocationRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,13 +29,14 @@ public class LocationService {
     public Location getLocationById(Long id) {
         return locationRepository.findById(id)
                 .orElseThrow(
-                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found with id: " + id));
+                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, 
+                            String.format(ExceptionMessages.LOCATION_NOT_FOUND, id)));
     }
 
     public Location createLocation(Location location) {
         if (locationRepository.findByLocationCode(location.getLocationCode()) != null) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
-                    "Location code already exists: " + location.getLocationCode());
+                    String.format(ExceptionMessages.LOCATION_CODE_EXISTS, location.getLocationCode()));
         }
         return locationRepository.save(location);
     }
@@ -42,12 +44,13 @@ public class LocationService {
     public Location updateLocation(Long id, Location locationDetails) {
         Location existingLocation = locationRepository.findById(id)
                 .orElseThrow(
-                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found with id: " + id));
+                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, 
+                            String.format(ExceptionMessages.LOCATION_NOT_FOUND, id)));
 
         Location existingWithCode = locationRepository.findByLocationCode(locationDetails.getLocationCode());
         if (existingWithCode != null && !existingWithCode.getId().equals(id)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
-                    "Location code already exists: " + locationDetails.getLocationCode());
+                    String.format(ExceptionMessages.LOCATION_CODE_EXISTS, locationDetails.getLocationCode()));
         }
 
         existingLocation.setName(locationDetails.getName());
@@ -61,12 +64,13 @@ public class LocationService {
     public void deleteLocation(Long id) {
         Location location = locationRepository.findById(id)
                 .orElseThrow(
-                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found with id: " + id));
+                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, 
+                            String.format(ExceptionMessages.LOCATION_NOT_FOUND, id)));
         try {
             locationRepository.delete(location);
         } catch (DataIntegrityViolationException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
-                    "This location cannot be deleted because it is used in one or more transportations.");
+                    ExceptionMessages.LOCATION_DELETE_CONFLICT);
         }
     }
 }

@@ -140,7 +140,11 @@ export const transportationApi = {
 // Route API
 export const routeApi = {
     search: async (request: RouteSearchRequest): Promise<Transportation[][]> => {
-        const response = await api.post<ApiResponse<Transportation[][]>>('/routes/search', request);
+        const params = new URLSearchParams();
+        params.append('originLocationCode', request.originLocationCode);
+        params.append('destinationLocationCode', request.destinationLocationCode);
+        params.append('date', request.date.toISOString().split('T')[0]);
+        const response = await api.get<ApiResponse<Transportation[][]>>(`/routes/search?${params.toString()}`);
         return response.data.data;
     },
 };

@@ -28,6 +28,7 @@ const RoutesPage: React.FC = () => {
     const [destinationSearchResults, setDestinationSearchResults] = useState<Location[]>([]);
     const [searchLoading, setSearchLoading] = useState(false);
     const [openRouteIndex, setOpenRouteIndex] = useState<number | null>(null);
+    const [hasSearched, setHasSearched] = useState(false);
 
     useEffect(() => {
         loadLocations();
@@ -76,6 +77,7 @@ const RoutesPage: React.FC = () => {
         if (!origin || !destination || !date) return;
 
         try {
+            setHasSearched(true);
             const routes = await routeApi.search({
                 originLocationCode: origin.locationCode,
                 destinationLocationCode: destination.locationCode,
@@ -175,7 +177,9 @@ const RoutesPage: React.FC = () => {
             {routes.length === 0 && (
                 <Paper sx={{ p: 3, mt: 2, textAlign: 'center' }}>
                     <Typography variant="h6" color="textSecondary">
-                        No routes found. Please select origin, destination and date, then search.
+                        {hasSearched 
+                            ? "No routes found for the selected criteria. Please try different locations or date."
+                            : "Please select origin, destination and date, then search to find available routes."}
                     </Typography>
                 </Paper>
             )}

@@ -1,4 +1,4 @@
-package com.ttech.dto;
+package com.ttech.dto.requests;
 
 import lombok.Data;
 

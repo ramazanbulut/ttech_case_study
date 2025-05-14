@@ -4,11 +4,7 @@
 Aviation Route Planner is a full-stack web application designed to help users plan and manage aviation routes. The system provides a modern, user-friendly interface for route planning and management, backed by a robust backend system. This application enables users to:
 
 - Search and filter airports worldwide
-- Plan optimal routes between airports
-- Calculate flight distances and estimated durations
-- Manage and save route plans
-- View detailed airport information
-- Export route data for flight planning
+- Plan optimal routes between locations
 
 ## Tech Stack
 
@@ -41,17 +37,13 @@ Aviation Route Planner is a full-stack web application designed to help users pl
   - Styled Components
     - CSS-in-JS solution
     - Dynamic styling
-    - Theme support
   - React Toastify
-    - User notifications
     - Toast messages
-    - Customizable alerts
 
 - **Date Handling**
   - Date-fns
     - Date manipulation
     - Timezone handling
-    - Formatting utilities
 
 ### Backend
 - **Java 17 & Spring Boot 3.2.3**
@@ -163,7 +155,7 @@ Aviation Route Planner is a full-stack web application designed to help users pl
    ```
 3. Create a `.env` file:
    ```env
-   REACT_APP_API_URL=http://localhost:8080
+   REACT_APP_API_URL=http://localhost:3000
    ```
 4. Start the development server:
    ```bash
@@ -206,11 +198,30 @@ The API includes the following main endpoints:
 ## Additional Tools
 
 ### Postman Collection
-The `AllControllers.postman_collection.json` file contains a complete set of API requests for testing:
-- Environment variables
-- Request examples
-- Response examples
-- Authentication setup
+A Postman collection (`Ttech_API_Collection.json`) is available for testing the API endpoints. The collection includes:
+
+- **Locations API**
+  - Get all locations (with pagination, sorting, and search)
+  - Get location by ID
+  - Create new location
+  - Update location
+  - Delete location
+
+- **Transportations API**
+  - Get all transportations (with filtering and pagination)
+  - Get transportation by ID
+  - Create new transportation
+  - Update transportation
+  - Delete transportation
+
+- **Routes API**
+  - Search routes between locations (GET request with query parameters)
+
+To use the collection:
+1. Import `Ttech_API_Collection.json` into Postman
+2. The collection uses `http://localhost:8080` as the base URL
+3. All endpoints are prefixed with `/api`
+4. Example requests are included for each endpoint
 
 ### Airport Data Management
 The `add_airports.py` script is used to import airport data from `airports.csv`:

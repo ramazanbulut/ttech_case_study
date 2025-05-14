@@ -1,7 +1,7 @@
 package com.ttech.exception;
 
-import com.ttech.dto.ApiResponse;
-import jakarta.validation.ConstraintViolationException;
+import com.ttech.constant.ExceptionMessages;
+import com.ttech.dto.responses.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -38,16 +38,17 @@ public class GlobalExceptionHandler {
         String value = String.valueOf(ex.getValue());
         Class<?> requiredType = ex.getRequiredType();
 
-        StringBuilder message = new StringBuilder("Invalid value '" + value + "' for parameter '" + paramName + "'.");
+        StringBuilder message = new StringBuilder(
+            String.format(ExceptionMessages.INVALID_PARAMETER_VALUE, value, paramName));
 
         if (requiredType != null && requiredType.isEnum()) {
             Object[] enumConstants = requiredType.getEnumConstants();
             String validValues = Arrays.stream(enumConstants)
                     .map(Object::toString)
                     .collect(Collectors.joining(", "));
-            message.append(" Valid values are: [").append(validValues).append("].");
+            message.append(String.format(ExceptionMessages.VALID_VALUES_ARE, validValues));
         } else if (requiredType != null) {
-            message.append(" Expected type: ").append(requiredType.getSimpleName()).append(".");
+            message.append(String.format(ExceptionMessages.EXPECTED_TYPE, requiredType.getSimpleName()));
         }
 
         return ResponseEntity.badRequest().body(ApiResponse.error(message.toString()));
@@ -56,8 +57,8 @@ public class GlobalExceptionHandler {
     
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleGeneralException(Exception ex) {
-        ex.printStackTrace(); // Opsiyonel loglama
+        ex.printStackTrace(); // Optional logging
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.error("Unexpected error occurred: " + ex.getMessage()));
+                .body(ApiResponse.error(String.format(ExceptionMessages.UNEXPECTED_ERROR, ex.getMessage())));
     }
 }

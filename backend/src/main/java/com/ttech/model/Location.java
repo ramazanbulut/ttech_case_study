@@ -31,11 +31,7 @@ public class Location {
     @Column(name = "location_code", nullable = false, unique = true)
     private String locationCode;
 
-    public static enum SortOrder {
-        ASC, DESC
-    }
-
-    public static enum SortBy {
+    public enum SortBy {
         id, name, locationCode, country, city
     }
 }

@@ -1,0 +1,311 @@
+{
+	"info": {
+		"_postman_id": "ttech-api-collection",
+		"name": "Ttech Aviation Route Planner API",
+		"description": "API collection for the Aviation Route Planner application",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Locations",
+			"item": [
+				{
+					"name": "Get All Locations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/locations?page=0&size=10&sortBy=id&sortOrder=ASC&search=",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "locations"],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								},
+								{
+									"key": "sortBy",
+									"value": "id"
+								},
+								{
+									"key": "sortOrder",
+									"value": "ASC"
+								},
+								{
+									"key": "search",
+									"value": ""
+								}
+							]
+						},
+						"description": "Get all locations with pagination, sorting and search capabilities"
+					}
+				},
+				{
+					"name": "Get Location by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/locations/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "locations", "1"]
+						},
+						"description": "Get a specific location by its ID"
+					}
+				},
+				{
+					"name": "Create Location",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Istanbul Airport\",\n    \"country\": \"Turkey\",\n    \"city\": \"Istanbul\",\n    \"locationCode\": \"IST\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/locations",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "locations"]
+						},
+						"description": "Create a new location"
+					}
+				},
+				{
+					"name": "Update Location",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Istanbul Airport Updated\",\n    \"country\": \"Turkey\",\n    \"city\": \"Istanbul\",\n    \"locationCode\": \"IST\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/locations/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "locations", "1"]
+						},
+						"description": "Update an existing location"
+					}
+				},
+				{
+					"name": "Delete Location",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/locations/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "locations", "1"]
+						},
+						"description": "Delete a location by ID"
+					}
+				}
+			]
+		},
+		{
+			"name": "Transportations",
+			"item": [
+				{
+					"name": "Get All Transportations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/transportations?page=0&size=10&originLocationCode=IST&destinationLocationCode=IZM&date=2024-03-20",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "transportations"],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								},
+								{
+									"key": "originLocationCode",
+									"value": "IST"
+								},
+								{
+									"key": "destinationLocationCode",
+									"value": "IZM"
+								},
+								{
+									"key": "date",
+									"value": "2024-03-20"
+								}
+							]
+						},
+						"description": "Get all transportations with filtering and pagination"
+					}
+				},
+				{
+					"name": "Get Transportation by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/transportations/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "transportations", "1"]
+						},
+						"description": "Get a specific transportation by its ID"
+					}
+				},
+				{
+					"name": "Create Transportation",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"originLocation\": {\n        \"id\": 1,\n        \"locationCode\": \"IST\"\n    },\n    \"destinationLocation\": {\n        \"id\": 2,\n        \"locationCode\": \"IZM\"\n    },\n    \"transportationType\": \"FLIGHT\",\n    \"operatingDays\": [1, 2, 3, 4, 5, 6, 7]\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/transportations",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "transportations"]
+						},
+						"description": "Create a new transportation"
+					}
+				},
+				{
+					"name": "Update Transportation",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"originLocation\": {\n        \"id\": 1,\n        \"locationCode\": \"IST\"\n    },\n    \"destinationLocation\": {\n        \"id\": 2,\n        \"locationCode\": \"IZM\"\n    },\n    \"transportationType\": \"BUS\",\n    \"operatingDays\": [1, 2, 3, 4, 5]\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/transportations/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "transportations", "1"]
+						},
+						"description": "Update an existing transportation"
+					}
+				},
+				{
+					"name": "Delete Transportation",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/transportations/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "transportations", "1"]
+						},
+						"description": "Delete a transportation by ID"
+					}
+				}
+			]
+		},
+		{
+			"name": "Routes",
+			"item": [
+				{
+					"name": "Search Routes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/routes/search?originLocationCode=IST&destinationLocationCode=IZM&date=2024-03-20",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "routes", "search"],
+							"query": [
+								{
+									"key": "originLocationCode",
+									"value": "IST"
+								},
+								{
+									"key": "destinationLocationCode",
+									"value": "IZM"
+								},
+								{
+									"key": "date",
+									"value": "2024-03-20"
+								}
+							]
+						},
+						"description": "Search for valid routes between two locations"
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	]
+} 

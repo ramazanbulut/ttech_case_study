@@ -1,6 +1,7 @@
 package com.ttech.service;
 
-import com.ttech.dto.TransportationFilterRequest;
+import com.ttech.constant.ExceptionMessages;
+import com.ttech.dto.requests.TransportationFilterRequest;
 import com.ttech.model.Location;
 import com.ttech.model.Transportation;
 import com.ttech.repository.LocationRepository;
@@ -27,7 +28,7 @@ public class TransportationService {
             origin = locationRepository.findByLocationCode(filter.getOriginLocationCode());
             if (origin == null) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "Invalid originLocationCode: " + filter.getOriginLocationCode());
+                        String.format(ExceptionMessages.INVALID_ORIGIN_LOCATION, filter.getOriginLocationCode()));
             }
         }
 
@@ -36,7 +37,7 @@ public class TransportationService {
             destination = locationRepository.findByLocationCode(filter.getDestinationLocationCode());
             if (destination == null) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "Invalid destinationLocationCode: " + filter.getDestinationLocationCode());
+                        String.format(ExceptionMessages.INVALID_DESTINATION_LOCATION, filter.getDestinationLocationCode()));
             }
         }
 
@@ -52,7 +53,7 @@ public class TransportationService {
     public Transportation getTransportationById(Long id) {
         return transportationRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Transportation not found with id: " + id));
+                        String.format(ExceptionMessages.TRANSPORTATION_NOT_FOUND, id)));
     }
 
     public Transportation createTransportation(Transportation transportation) {
@@ -62,7 +63,7 @@ public class TransportationService {
     public Transportation updateTransportation(Long id, Transportation transportationDetails) {
         Transportation existing = transportationRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Transportation not found with id: " + id));
+                        String.format(ExceptionMessages.TRANSPORTATION_NOT_FOUND, id)));
 
         existing.setOriginLocation(transportationDetails.getOriginLocation());
         existing.setDestinationLocation(transportationDetails.getDestinationLocation());
@@ -75,7 +76,7 @@ public class TransportationService {
     public void deleteTransportation(Long id) {
         Transportation transportation = transportationRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Transportation not found with id: " + id));
+                        String.format(ExceptionMessages.TRANSPORTATION_NOT_FOUND, id)));
         transportationRepository.delete(transportation);
     }
 }
